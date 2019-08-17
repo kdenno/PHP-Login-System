@@ -1,32 +1,36 @@
 <?php
 // get all classes
 require_once 'core/init.php';
-$validation = new Validation;
-$validate = $validation->check($_POST, array(
-    'username' => array(
-        'required' => true,
-        'min' => 2,
-        'max' => 20,
-        'unique' => 'users'
-    ),
-    'password' => array(
-        'required' => true,
-        'min' => 6
-    ),
-    'password_again' => array(
-        'required' => true,
-        'matches' => 'password'
-    ),
-    'name' => array(
-        'required' => true,
-        'min' => 2,
-        'max' => 50
-    )
-));
-if ($validate->passed()) {
-    echo 'passed';
-} else {
-    print_r($validation->errors());
+if (Input::exists()) {
+    if (Token::check(Input::get('token'))) {
+        $validation = new Validation;
+        $validate = $validation->check($_POST, array(
+            'username' => array(
+                'required' => true,
+                'min' => 2,
+                'max' => 20,
+                'unique' => 'users'
+            ),
+            'password' => array(
+                'required' => true,
+                'min' => 6
+            ),
+            'password_again' => array(
+                'required' => true,
+                'matches' => 'password'
+            ),
+            'name' => array(
+                'required' => true,
+                'min' => 2,
+                'max' => 50
+            )
+        ));
+        if ($validate->passed()) {
+            echo 'passed';
+        } else {
+            print_r($validation->errors());
+        }
+    }
 }
 ?>
 <form method="post">
@@ -47,6 +51,7 @@ if ($validate->passed()) {
         <input type="text" name="name" value="<?php escape(Input::get('name')) ?>" id="name">
     </div>
     <div class="field">
+        <input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
         <input type="submit" value="Register">
     </div>
 
