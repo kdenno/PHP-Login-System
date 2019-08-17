@@ -1,4 +1,6 @@
 <?php
 // import configs
 require_once 'core/init.php';
-DB::getInstance();
+if (Session::exists('success')) {
+    echo Session::flash('success');
+}

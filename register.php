@@ -26,7 +26,9 @@ if (Input::exists()) {
             )
         ));
         if ($validate->passed()) {
-            echo 'passed';
+            // flush session and redirect
+            Session::flash('success', 'You registered Successfuly');
+            header('Location: index.php');
         } else {
             print_r($validation->errors());
         }
