@@ -26,9 +26,25 @@ if (Input::exists()) {
             )
         ));
         if ($validate->passed()) {
-            // flush session and redirect
-            Session::flash('success', 'You registered Successfuly');
-            header('Location: index.php');
+            // validation passed, register user
+            $user = new User();
+            // create salt
+            $salt = Hash::salt(32);
+            try {
+                $user->create(array(
+                    'username' => Input::get('username'),
+                    'password' => Hash::make(Input::get('password'), $salt),
+                    'salt' => $salt,
+                    'name' => Input::get('name'),
+                    'joined' => date('Y-m-d H:i:s'),
+                    'group' => 1,
+                ));
+                // flush session and redirect
+                Session::flash('home', 'You registered Successfuly');
+                Redirect::to('index.php');
+            } catch (Exception $e) {
+                die($e->getMessage());
+            }
         } else {
             print_r($validation->errors());
         }
